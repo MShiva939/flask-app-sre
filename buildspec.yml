@@ -3,6 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - cat app.py
       - echo Logging in to Amazon ECR...
       - aws --version
       - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
