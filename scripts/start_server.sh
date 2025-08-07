@@ -7,5 +7,5 @@ aws ecr get-login-password --region $REGION | docker login --username AWS --pass
 docker stop my-app || true
 docker rm my-app || true
 docker pull $REPOSITORY_URI:latest
-docker run -d -p 80:80 --name my-app $REPOSITORY_URI:latest
+docker run -d -p 80:80 --name my-app --log-driver=awslogs --log-opt awslogs-group=cicd-group --log-opt awslogs-region=us-east-1 --log-opt awslogs-stream=cicd-app $REPOSITORY_URI:latest
 
