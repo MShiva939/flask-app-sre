@@ -11,3 +11,4 @@ if [ "$STATUS" -ne 200 ]; then
 else
   echo "Health check passed with status $STATUS"
 fi
+
