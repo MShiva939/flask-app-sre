@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /home/ec2-user/app
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 REGION=us-east-1
 REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/devops-app
