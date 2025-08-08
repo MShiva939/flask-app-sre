@@ -16,18 +16,6 @@ CodeDeploy uses `appspec.yml` to execute deployment scripts from the
 pulls the latest image, and starts a new container. Health checks ensure 
 that the new container is running successfully.
 
-# FILE STRUCTURE
-.
-├── scripts/
-│   ├── health_check.sh       - Checks if the application container is running.
-│   └── start_server.sh       - Stops old container, pulls latest image, 
-│                               and starts new container.
-├── Dockerfile                - Instructions to build the Docker image.
-├── README.md                 - Project documentation.
-├── app.py                    - Main Python application file.
-├── appspec.yml               - CodeDeploy configuration file.
-├── buildspec.yml             - CodeBuild configuration file.
-└── requirements.txt          - Python dependencies.
 
 # CODEBUILD WORKFLOW (buildspec.yml)
 
