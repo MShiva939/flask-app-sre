@@ -47,21 +47,21 @@ scripts/health_check.sh:
 - Uses `docker ps` or container logs to check status.
 - Returns 0 if running, 1 if stopped.
 
-### ROLLBACK APPROACH
+# ROLLBACK APPROACH
 
-# Automatic rollback via CodeDeploy
+Automatic rollback via CodeDeploy
  If health_check.sh fails, CodeDeploy reverts to last successful Docker image.
 
-# Manual rollback steps:
+ Manual rollback steps:
  1. Go to CodeDeploy deployment group in AWS Console
  2. Find last successful deployment revision
  3. Redeploy that revision to restore stable state
 
-# Image tagging:
+ Image tagging:
  All images in ECR tagged with commit hash and 'latest'
  Pull commit-specific tag of last successful build for rollback
 
-# Monitoring after rollback:
+ Monitoring after rollback:
  CloudWatch alarms (EC2 health, ALB 5xx) stay active
  SNS topic sends email alerts if issues persist
 
