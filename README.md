@@ -1,13 +1,14 @@
 
-Application Code Repository Documentation
+# APPLICATION CODE REPOSITORY DOCUMENTATION
 
 
 OVERVIEW
+
 This repository contains the application code and deployment scripts 
 for automated Docker image creation, push to AWS ECR, and deployment 
 using AWS CodeBuild and CodeDeploy.
 
-CodeBuild uses `buildspec.yml` to build the Docker image from `Dockerfile`
+CodeBuild uses`buildspec.yml` to build the Docker image from `Dockerfile`
 and push it to the ECR repository.
 
 CodeDeploy uses `appspec.yml` to execute deployment scripts from the 
@@ -29,6 +30,7 @@ FILE STRUCTURE
 └── requirements.txt          - Python dependencies.
 
 CODEBUILD WORKFLOW (buildspec.yml)
+
 1. Install dependencies.
 2. Authenticate to AWS ECR.
 3. Build Docker image using `Dockerfile`.
@@ -36,6 +38,7 @@ CODEBUILD WORKFLOW (buildspec.yml)
 5. Push image to AWS ECR repository.
 
 CODEDEPLOY WORKFLOW (appspec.yml)
+
 1. Download latest application package.
 2. Run `start_server.sh` to:
    - Stop existing container.
@@ -46,6 +49,7 @@ CODEDEPLOY WORKFLOW (appspec.yml)
    - Fail deployment if health check fails.
 
 DEPLOYMENT SCRIPTS
+
 scripts/start_server.sh:
 - Stops any running container named "my-app".
 - Pulls the latest Docker image from AWS ECR.
