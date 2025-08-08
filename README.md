@@ -1,1 +1,70 @@
-# flask-app-sre
+===========================================================
+Application Code Repository Documentation
+===========================================================
+
+OVERVIEW
+This repository contains the application code and deployment scripts 
+for automated Docker image creation, push to AWS ECR, and deployment 
+using AWS CodeBuild and CodeDeploy.
+
+CodeBuild uses `buildspec.yml` to build the Docker image from `Dockerfile`
+and push it to the ECR repository.
+
+CodeDeploy uses `appspec.yml` to execute deployment scripts from the 
+`scripts/` directory. The deployment process stops the running container, 
+pulls the latest image, and starts a new container. Health checks ensure 
+that the new container is running successfully.
+
+FILE STRUCTURE
+.
+├── scripts/
+│   ├── health_check.sh       - Checks if the application container is running.
+│   └── start_server.sh       - Stops old container, pulls latest image, 
+│                               and starts new container.
+├── Dockerfile                - Instructions to build the Docker image.
+├── README.md                 - Project documentation.
+├── app.py                    - Main Python application file.
+├── appspec.yml               - CodeDeploy configuration file.
+├── buildspec.yml             - CodeBuild configuration file.
+└── requirements.txt          - Python dependencies.
+
+CODEBUILD WORKFLOW (buildspec.yml)
+1. Install dependencies.
+2. Authenticate to AWS ECR.
+3. Build Docker image using `Dockerfile`.
+4. Tag image with commit hash or build ID.
+5. Push image to AWS ECR repository.
+
+CODEDEPLOY WORKFLOW (appspec.yml)
+1. Download latest application package.
+2. Run `start_server.sh` to:
+   - Stop existing container.
+   - Pull latest image from ECR.
+   - Start new container with updated code.
+3. Run `health_check.sh` to:
+   - Verify if the new container is healthy.
+   - Fail deployment if health check fails.
+
+DEPLOYMENT SCRIPTS
+scripts/start_server.sh:
+- Stops any running container named "my-app".
+- Pulls the latest Docker image from AWS ECR.
+- Runs the new container in detached mode.
+
+scripts/health_check.sh:
+- Uses `docker ps` or container logs to check status.
+- Returns 0 if running, 1 if stopped.
+
+SECURITY BEST PRACTICES
+- Use least privilege IAM roles for CodeBuild and CodeDeploy.
+- Restrict access to the ECR repository.
+- Enable CloudWatch Logs for build and deployment monitoring.
+
+OBSERVABILITY
+- CloudWatch Logs integrated with CodeBuild and CodeDeploy.
+- Log retention policies applied to save cost and improve security.
+
+NOTES
+- Ensure Docker is installed and configured in CodeBuild environment.
+- Test scripts locally before committing to repository.
+- Use unique image tags for each deployment to avoid cache issues.
