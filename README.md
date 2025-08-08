@@ -78,7 +78,7 @@ scripts/health_check.sh:
  SNS topic sends email alerts if issues persist
 
 # SECURITY BEST PRACTICES
-- Use least privilege IAM roles for CodeBuild and CodeDeploy.
+- Use least privilege IAM roles for CodeBuild and CodeDeploy by granting only the specific permissions required for the tasks, and avoid attaching unused permissions.
 - Restrict access to the ECR repository.
 - Enable CloudWatch Logs for build and deployment monitoring.
 
