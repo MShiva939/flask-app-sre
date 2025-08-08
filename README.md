@@ -2,7 +2,7 @@
 # APPLICATION CODE REPOSITORY DOCUMENTATION
 
 
-OVERVIEW
+# OVERVIEW
 
 This repository contains the application code and deployment scripts 
 for automated Docker image creation, push to AWS ECR, and deployment 
@@ -16,7 +16,7 @@ CodeDeploy uses `appspec.yml` to execute deployment scripts from the
 pulls the latest image, and starts a new container. Health checks ensure 
 that the new container is running successfully.
 
-FILE STRUCTURE
+# FILE STRUCTURE
 .
 ├── scripts/
 │   ├── health_check.sh       - Checks if the application container is running.
@@ -29,7 +29,7 @@ FILE STRUCTURE
 ├── buildspec.yml             - CodeBuild configuration file.
 └── requirements.txt          - Python dependencies.
 
-CODEBUILD WORKFLOW (buildspec.yml)
+# CODEBUILD WORKFLOW (buildspec.yml)
 
 1. Install dependencies.
 2. Authenticate to AWS ECR.
@@ -37,7 +37,7 @@ CODEBUILD WORKFLOW (buildspec.yml)
 4. Tag image with commit hash or build ID.
 5. Push image to AWS ECR repository.
 
-CODEDEPLOY WORKFLOW (appspec.yml)
+# CODEDEPLOY WORKFLOW (appspec.yml)
 
 1. Download latest application package.
 2. Run `start_server.sh` to:
@@ -48,7 +48,7 @@ CODEDEPLOY WORKFLOW (appspec.yml)
    - Verify if the new container is healthy.
    - Fail deployment if health check fails.
 
-DEPLOYMENT SCRIPTS
+# DEPLOYMENT SCRIPTS
 
 scripts/start_server.sh:
 - Stops any running container named "my-app".
@@ -59,16 +59,40 @@ scripts/health_check.sh:
 - Uses `docker ps` or container logs to check status.
 - Returns 0 if running, 1 if stopped.
 
-SECURITY BEST PRACTICES
+### ROLLBACK APPROACH
+
+# Automatic rollback via CodeDeploy
+ If health_check.sh fails, CodeDeploy reverts to last successful Docker image.
+
+# Manual rollback steps:
+ 1. Go to CodeDeploy deployment group in AWS Console
+ 2. Find last successful deployment revision
+ 3. Redeploy that revision to restore stable state
+
+# Image tagging:
+ All images in ECR tagged with commit hash and 'latest'
+ Pull commit-specific tag of last successful build for rollback
+
+# Monitoring after rollback:
+ CloudWatch alarms (EC2 health, ALB 5xx) stay active
+ SNS topic sends email alerts if issues persist
+
+# SECURITY BEST PRACTICES
 - Use least privilege IAM roles for CodeBuild and CodeDeploy.
 - Restrict access to the ECR repository.
 - Enable CloudWatch Logs for build and deployment monitoring.
 
-OBSERVABILITY
+# OBSERVABILITY
 - CloudWatch Logs integrated with CodeBuild and CodeDeploy.
-- Log retention policies applied to save cost and improve security.
+- CloudWatch Alarm: EC2 Health Check
+ -> Triggers if EC2 instance status check fails
+- CloudWatch Alarm: ALB 5xx Errors
+ -> Triggers if ALB returns high number of 5xx responses
+- Both alarms are linked to a single Amazon SNS topic
+ -> Sends email alerts to subscribers in case of alarm
+  
 
-NOTES
+# NOTES
 - Ensure Docker is installed and configured in CodeBuild environment.
 - Test scripts locally before committing to repository.
-- Use unique image tags for each deployment to avoid cache issues.
+
